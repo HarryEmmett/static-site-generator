@@ -1,7 +1,7 @@
 
 import unittest
 
-from splitnodes import split_nodes_delimiter
+from formatmarkdown import extract_markdown_images, extract_markdown_links, split_nodes_delimiter
 from textnode import TextNode, TextType
 
 
@@ -84,3 +84,25 @@ class TestSplitNodes(unittest.TestCase):
             ],
             new_nodes,
         )
+
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![img](https://test.png)"
+        )
+        no_matches = extract_markdown_images("This is text with an [link](https://test.png)")
+        self.assertListEqual([("img", "https://test.png")], matches)
+        self.assertListEqual([], no_matches)
+
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with an [link](https://test.com) and [link2](https://test2.com)"
+        )
+        no_matches = extract_markdown_links("This is text with an ![img](https://test.png)")
+        self.assertListEqual(
+            [
+                ("link", "https://test.com"),
+                ("link2", "https://test2.com"),
+            ],
+            matches,
+        )
+        self.assertListEqual([], no_matches)

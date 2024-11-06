@@ -1,3 +1,4 @@
+import re
 from textnode import TextNode, TextType
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
@@ -32,3 +33,34 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 
         new_nodes.extend(new_split_nodes)
     return new_nodes
+
+def extract_markdown_images(text):
+    # [([^\]]+)\] matches everything inside a square bracket
+    # ! checks it starts with an !
+    image_matches = re.findall(r"!\[([^\]]+)\]\(([^\]]+)\)", text)
+    return image_matches
+
+def extract_markdown_links(text):
+    # (?<!!) does not start with an !
+    link_matches = re.findall(r"(?<!!)\[([^\]]+)\]\(([^\]]+)\)", text)
+    return link_matches
+
+def split_nodes_image(old_nodes):
+    return
+
+def split_nodes_link(old_nodes):
+    return
+
+node = TextNode(
+    "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+    TextType.TEXT,
+)
+new_nodes = split_nodes_link([node])
+# [
+#     TextNode("This is text with a link ", TextType.TEXT),
+#     TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+#     TextNode(" and ", TextType.TEXT),
+#     TextNode(
+#         "to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"
+#     ),
+# ]
